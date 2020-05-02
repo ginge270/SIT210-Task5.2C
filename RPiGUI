@@ -1,0 +1,81 @@
+
+from tkinter import * # Import all from TkInter Library
+import tkinter.font
+from gpiozero import LED # Import LED functions from GPIOzero
+import RPi.GPIO as GPIO # Import Raspberry Pi GPIO Library
+GPIO.setmode(GPIO.BCM)
+
+#Define Hardware
+
+redLed = LED(17)
+blueLed = LED(18)
+greenLed = LED(22)
+
+# Define GUI
+
+win = Tk()                              # create window
+win.title("LED Toggler")                # name window
+myFont = tkinter.font.Font(family = 'Helvetica', size = 12, weight = "bold") #create font
+
+# Define Event Functions
+
+redStatus = False
+blueStatus = False
+greenStatus = False
+
+def redToggle():
+    if redLed.is_lit:
+        redLed.off()
+        redStatus = False
+    elif blueStatus == False and greenStatus == False:
+        blueLed.off()
+        greenLed.off()
+        redLed.on()
+        redStatus = True
+        
+       
+def blueToggle():
+    if blueLed.is_lit:
+        blueLed.off()
+        blueStatus = False
+       
+    elif redStatus == False and greenStatus == False:
+        redLed.off()
+        greenLed.off()
+        blueLed.on()
+        blueStatus = True
+        
+       
+def greenToggle():
+    if greenLed.is_lit:
+        greenLed.off()
+        greenStatus = False
+    elif redStatus == False and blueStatus == False:
+        redLed.off()
+        blueLed.off()
+        greenLed.on()
+        greenStatus = True
+        
+       
+def close():
+    win.destroy()
+    GPIO.cleanup()
+
+
+# Define Widgets
+
+redLedButton = Button(win,text = 'Red LED', font = myFont, command = redToggle, bg = 'red', height = 1, width = 24)
+redLedButton.grid(row = 0, column = 1)
+
+blueLedButton = Button(win,text = 'Blue LED', font = myFont, command = blueToggle, bg = 'blue', height = 1, width = 24)
+blueLedButton.grid(row = 2, column = 1)
+
+greenLedButton = Button(win,text = 'Green LED', font = myFont, command = greenToggle, bg = 'green', height = 1, width = 24)
+greenLedButton.grid(row = 4, column = 1)
+
+exitButton = Button(win,text = 'Exit', font = myFont, command = close, bg = 'white', height = 1, width = 10)
+exitButton.grid(row = 6, column = 1)
+
+win.protocol("WM DELETE WINDOW", close)   # cleanup GPIO when user closes window
+
+win.mainloop() #loop driver
